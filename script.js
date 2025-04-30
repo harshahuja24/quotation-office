@@ -1,4 +1,4 @@
-
+document.addEventListener('DOMContentLoaded', function() {
   // Set default quote number with date
   const today = new Date();
   const dateString = today.getFullYear().toString().substr(-2) + 
@@ -205,63 +205,76 @@
     toastr.info('Generating PDF, please wait...');
     
     // Populate the PDF template with data
-    function populatePdfTemplate() {
-      // Company Information - Ensure this line is correct and not missing
-      document.getElementById('pdf-company-name').textContent = document.getElementById('companyName').value;
-      document.getElementById('pdf-company-address').textContent = document.getElementById('companyAddress').value;
-      document.getElementById('pdf-company-city').textContent = document.getElementById('companyCity').value;
-      document.getElementById('pdf-company-contact').textContent = document.getElementById('companyContact').value;
-      document.getElementById('pdf-company-email').textContent = document.getElementById('companyEmail').value;
+    populatePdfTemplate();
+    
+    // Wait for the next tick to ensure the PDF template is fully updated
+    setTimeout(function() {
+      // Generate PDF
+      generatePdf();
+    }, 100);
+  });
+
+  // Function to populate the PDF template with form data
+  function populatePdfTemplate() {
+    // Company Information
+// Replace or update this line in the populatePdfTemplate function
+    document.getElementById('pdf-company-name').textContent = document.getElementById('companyName').value;
+    document.getElementById('pdf-company-address').textContent = document.getElementById('companyAddress').value;
+    document.getElementById('pdf-company-city').textContent = document.getElementById('companyCity').value;
+    document.getElementById('pdf-company-contact').textContent = document.getElementById('companyContact').value;
+    document.getElementById('pdf-company-email').textContent = document.getElementById('companyEmail').value;
+    
+    // Document Information
+    document.getElementById('pdf-document-type').textContent = document.getElementById('quotationType').value;
+    document.getElementById('pdf-quote-number').textContent = document.getElementById('quoteNumber').value;
+    document.getElementById('pdf-date').textContent = document.getElementById('date').value;
+    
+    // Customer Information
+    document.getElementById('pdf-customer-name').textContent = document.getElementById('customerName').value;
+    document.getElementById('pdf-customer-address').textContent = document.getElementById('customerAddress').value || 'N/A';
+    document.getElementById('pdf-customer-phone').textContent = document.getElementById('customerPhone').value || 'N/A';
+    document.getElementById('pdf-customer-email').textContent = document.getElementById('customerEmail').value || 'N/A';
+    document.getElementById('pdf-project-reference').textContent = document.getElementById('projectReference').value || 'N/A';
+    
+    // Items Table
+    const itemsBody = document.getElementById('pdf-items-body');
+    itemsBody.innerHTML = '';
+    
+    document.querySelectorAll('#itemsTable tbody tr').forEach((row, index) => {
+      const particulars = row.querySelector('[data-field="particulars"]').value || '';
+      const quantity = row.querySelector('[data-field="quantity"]').value || '';
+      const widthInches = parseFloat(row.querySelector('[data-field="width"]').value) || 0;
+      const lengthInches = parseFloat(row.querySelector('[data-field="length"]').value) || 0;
+      const sqft = row.querySelector('[data-field="sqft"]').value || '';
+      const tsqft = row.querySelector('[data-field="tsqft"]').value || '';
+      const rate = row.querySelector('[data-field="rate"]').value || '';
+      const amount = row.querySelector('[data-field="amount"]').value || '';
       
-      // Rest of your existing populatePdfTemplate function...
+      // Convert inches to feet+inches display
+      const widthFeet = Math.floor(widthInches / 12);
+      const widthRemainder = (widthInches % 12).toFixed(2);
+      const lengthFeet = Math.floor(lengthInches / 12);
+      const lengthRemainder = (lengthInches % 12).toFixed(2);
       
-      // Modify how dimensions are displayed in PDF based on toggle
-      const useInches = document.getElementById('useInches').checked;
+      const widthDisplay = widthInches > 0 ? `${widthInches}" (${widthFeet}' ${widthRemainder}")` : '';
+      const lengthDisplay = lengthInches > 0 ? `${lengthInches}" (${lengthFeet}' ${lengthRemainder}")` : '';
       
-      document.querySelectorAll('#itemsTable tbody tr').forEach((row, index) => {
-        const particulars = row.querySelector('[data-field="particulars"]').value || '';
-        const quantity = row.querySelector('[data-field="quantity"]').value || '';
-        const width = parseFloat(row.querySelector('[data-field="width"]').value) || 0;
-        const length = parseFloat(row.querySelector('[data-field="length"]').value) || 0;
-        const sqft = row.querySelector('[data-field="sqft"]').value || '';
-        const tsqft = row.querySelector('[data-field="tsqft"]').value || '';
-        const rate = row.querySelector('[data-field="rate"]').value || '';
-        const amount = row.querySelector('[data-field="amount"]').value || '';
-        
-        let widthDisplay, lengthDisplay;
-        
-        if (useInches) {
-          // When using inches, show both inches and equivalent in feet+inches
-          const widthFeet = Math.floor(width / 12);
-          const widthRemainder = (width % 12).toFixed(2);
-          const lengthFeet = Math.floor(length / 12);
-          const lengthRemainder = (length % 12).toFixed(2);
-          
-          widthDisplay = width > 0 ? `${width}" (${widthFeet}' ${widthRemainder}")` : '';
-          lengthDisplay = length > 0 ? `${length}" (${lengthFeet}' ${lengthRemainder}")` : '';
-        } else {
-          // When using feet, show decimal feet
-          widthDisplay = width > 0 ? `${width}'` : '';
-          lengthDisplay = length > 0 ? `${length}'` : '';
-        }
-        
-        // Add to PDF table
-        if (particulars || quantity || width || length || rate || amount) {
-          const newRow = document.createElement('tr');
-          newRow.innerHTML = `
-            <td>${index + 1}</td>
-            <td style="text-align: left;">${particulars}</td>
-            <td>${quantity}</td>
-            <td>${widthDisplay}</td>
-            <td>${lengthDisplay}</td>
-            <td>${sqft}</td>
-            <td>${tsqft}</td>
-            <td>${rate}</td>
-            <td class="text-right">₹ ${formatNumber(amount)}</td>
-          `;
-          itemsBody.appendChild(newRow);
-        }
-      });
+      if (particulars || quantity || widthInches || lengthInches || rate || amount) {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${index + 1}</td>
+          <td style="text-align: left;">${particulars}</td>
+          <td>${quantity}</td>
+          <td>${widthDisplay}</td>
+          <td>${lengthDisplay}</td>
+          <td>${sqft}</td>
+          <td>${tsqft}</td>
+          <td>${rate}</td>
+          <td class="text-right">₹ ${formatNumber(amount)}</td>
+        `;
+        itemsBody.appendChild(newRow);
+      }
+    });
     
     // If no items were added, add a placeholder row
     if (itemsBody.children.length === 0) {
@@ -292,82 +305,6 @@
       watermarkElement.style.display = 'none';
     }
   }
-
-  // Add this to your document.addEventListener('DOMContentLoaded', function() {...})
-  document.getElementById('useInches').addEventListener('change', function() {
-    const useInches = this.checked;
-    
-    // Convert all existing values when toggle changes
-    document.querySelectorAll('#itemsTable tbody tr').forEach(row => {
-      const widthInput = row.querySelector('[data-field="width"]');
-      const lengthInput = row.querySelector('[data-field="length"]');
-      
-      if (widthInput.value && lengthInput.value) {
-        const width = parseFloat(widthInput.value) || 0;
-        const length = parseFloat(lengthInput.value) || 0;
-        
-        if (useInches) {
-          // Convert feet to inches
-          widthInput.value = (width * 12).toFixed(2);
-          lengthInput.value = (length * 12).toFixed(2);
-        } else {
-          // Convert inches to feet
-          widthInput.value = (width / 12).toFixed(2);
-          lengthInput.value = (length / 12).toFixed(2);
-        }
-      }
-    });
-
-    document.querySelectorAll('.calc-trigger').forEach(input => {
-      input.dispatchEvent(new Event('input'));
-    });
-  });
-  
-
-// Then modify the handleCalculation function:
-function handleCalculation() {
-  const row = this.closest('tr');
-  const quantityInput = row.querySelector('[data-field="quantity"]');
-  const widthInput = row.querySelector('[data-field="width"]');
-  const lengthInput = row.querySelector('[data-field="length"]');
-  const sqftInput = row.querySelector('[data-field="sqft"]');
-  const tsqftInput = row.querySelector('[data-field="tsqft"]');
-  const rateInput = row.querySelector('[data-field="rate"]');
-  const amountInput = row.querySelector('[data-field="amount"]');
-  
-  // Get values, defaulting to 0 if not present
-  const quantity = parseFloat(quantityInput.value) || 0;
-  const width = parseFloat(widthInput.value) || 0;
-  const length = parseFloat(lengthInput.value) || 0;
-  const rate = parseFloat(rateInput.value) || 0;
-  
-  // Check if using inches or feet based on toggle
-  const useInches = document.getElementById('useInches').checked;
-  
-  // Calculate SQFT based on whether input is in inches or feet
-  let sqft;
-  if (useInches) {
-    // Convert inches to feet for area calculation
-    const widthFeet = width / 12;
-    const lengthFeet = length / 12;
-    sqft = widthFeet * lengthFeet;
-  } else {
-    // Already in feet
-    sqft = width * length;
-  }
-  
-  sqftInput.value = sqft.toFixed(2);
-  
-  // Calculate TSQFT (SQFT × quantity)
-  let tsqft = sqft * quantity;
-  tsqftInput.value = tsqft.toFixed(2);
-  
-  // Calculate amount (TSQFT × rate)
-  let amount = tsqft * rate;
-  amountInput.value = amount.toFixed(2);
-  
-  calculateTotals();
-}
 
   // Function to generate and download the PDF
   function generatePdf() {
