@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function populatePdfTemplate() {
     // Company Information
 // Replace or update this line in the populatePdfTemplate function
-    document.getElementById('pdf-company-name').textContent = document.getElementById('companyName').value;
+    // document.getElementById('pdf-company-name').textContent = document.getElementById('companyName').value;
     document.getElementById('pdf-company-address').textContent = document.getElementById('companyAddress').value;
     document.getElementById('pdf-company-city').textContent = document.getElementById('companyCity').value;
     document.getElementById('pdf-company-contact').textContent = document.getElementById('companyContact').value;
