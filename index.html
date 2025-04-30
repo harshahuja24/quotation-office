@@ -27,7 +27,7 @@
         <div class="row align-items-center">
           <div class="col-md-8">
             <div class="company-logo">
-              <input type="text" id="companyName" class="editable-field text-white" value="MJ KRAFTECH">
+              <input type="text" id="companyName" class="editable-field text-white" value="MJ KRAFTECH & STONE DESIGN">
             </div>
             <div class="company-details">
               <input type="text" id="companyAddress" class="editable-field text-white" value="SHOP NO B - 4, BABA PRIME ESTATE, NEAR CNG PUMP,">
@@ -203,21 +203,27 @@
         </div>
 
         <!-- Authorized Signature Section -->
-        <div class="row mt-4">
-          <div class="col-md-8">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="showWatermark">
-              <label class="form-check-label" for="showWatermark">
-                Show "QUOTATION" watermark in PDF
-              </label>
-            </div>
-          </div>
-          <div class="col-md-4 text-center">
-            <p class="mb-0 mt-4">Authorised Signatory</p>
-            <hr style="width: 75%; margin: 10px auto;">
-            <p class="mb-0" id="signatureText">For MJ KRAFTECH</p>
-          </div>
-        </div>
+       <div class="row mt-4">
+  <div class="col-md-8">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="showWatermark">
+      <label class="form-check-label" for="showWatermark">
+        Show "QUOTATION" watermark in PDF
+      </label>
+    </div>
+    <div class="form-check mt-2">
+      <input class="form-check-input" type="checkbox" id="useInches" checked>
+      <label class="form-check-label" for="useInches">
+        Use Inches (uncheck for Feet)
+      </label>
+    </div>
+  </div>
+  <div class="col-md-4 text-center">
+    <p class="mb-0 mt-4">Authorised Signatory</p>
+    <hr style="width: 75%; margin: 10px auto;">
+    <p class="mb-0" id="signatureText">For MJ KRAFTECH</p>
+  </div>
+</div>
       </div>
 
       <!-- Action Buttons -->
